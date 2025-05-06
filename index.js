@@ -6,6 +6,8 @@ const { google } = require('googleapis');
 const app = express();
 app.use(cors());
 
+console.log("🔍 REDIRECT_URI:", process.env.REDIRECT_URI);
+
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -15,11 +17,17 @@ const oauth2Client = new google.auth.OAuth2(
 const SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
 
 app.get('/auth/search-console', (req, res) => {
+  const redirect = process.env.REDIRECT_URI;
+  if (!redirect) {
+    res.status(500).send("Errore: REDIRECT_URI non definito.");
+    return;
+  }
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
+    redirect_uri: redirect
   });
-  res.redirect(url);
+  res.send("🔗 URL generato: <a href='" + url + "'>" + url + "</a>");
 });
 
 app.get('/callback', async (req, res) => {
@@ -49,5 +57,5 @@ app.get('/search-data', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server avviato su http://localhost:${port}`);
+  console.log(`🚀 Server avviato su http://localhost:${port}`);
 });
