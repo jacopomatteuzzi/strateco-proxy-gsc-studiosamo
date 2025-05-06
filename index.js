@@ -26,7 +26,7 @@ app.get('/callback', async (req, res) => {
   const { code } = req.query;
   const { tokens } = await oauth2Client.getToken(code);
   oauth2Client.setCredentials(tokens);
-  res.send('Autenticazione completata. Ora puoi fare richieste all'API.');
+  res.send("Autenticazione completata. Ora puoi fare richieste all'API.");
 });
 
 app.get('/search-data', async (req, res) => {
